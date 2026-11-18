@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="nb">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Jobbsøknad – interaktive oppgaver</title>
+<style>
+:root{--bg:#f4f6fb;--card:#fff;--ink:#1b2030;--mut:#5d6578;--line:#dde2ee;--pri:#4f46e5;--pri2:#7c3aed;--soft:#eef0ff;--ok:#16a34a;--okb:#dcfce7;--bad:#dc2626;--badb:#fee2e2;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:light}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f1220;--card:#181c2e;--ink:#eef0fb;--mut:#a0a8c0;--line:#2b3150;--soft:#232850;--okb:#12341f;--badb:#401a1a;--pri:#8b84ff;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0f1220;--card:#181c2e;--ink:#eef0fb;--mut:#a0a8c0;--line:#2b3150;--soft:#232850;--okb:#12341f;--badb:#401a1a;--pri:#8b84ff;color-scheme:dark}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.6 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+.wrap{max-width:760px;margin:0 auto;padding:20px 16px 60px}
+header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px}
+h1{font-size:1.15rem;margin:0;background:linear-gradient(90deg,var(--pri),var(--pri2));-webkit-background-clip:text;background-clip:text;color:transparent}
+.score{font-size:.9rem;color:var(--mut);font-weight:600}
+.dots{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px}
+.dot{width:38px;height:38px;border-radius:50%;border:2px solid var(--line);background:var(--card);color:var(--mut);font-weight:700;cursor:pointer;font-size:.9rem}
+.dot.cur{background:linear-gradient(135deg,var(--pri),var(--pri2));color:#fff;border-color:transparent}
+.dot.ok{border-color:var(--ok);color:var(--ok)}.dot.bad{border-color:var(--bad);color:var(--bad)}
+.dot.cur.ok,.dot.cur.bad{color:#fff}
+.card{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:24px;box-shadow:0 8px 30px rgba(60,60,120,.08)}
+.step{font-size:.8rem;text-transform:uppercase;letter-spacing:.08em;color:var(--pri);font-weight:700}
+h2{margin:4px 0 4px;font-size:1.5rem;line-height:1.25}
+.sub{color:var(--mut);margin:0 0 18px}
+.box{background:var(--soft);border-radius:14px;padding:18px 20px;line-height:2.4}
+.box p{margin:0 0 6px}
+select{font:inherit;padding:5px 30px 5px 10px;border-radius:10px;border:2px solid var(--line);background:var(--card);color:var(--ink);margin:0 2px;max-width:100%;cursor:pointer}
+select:focus,button:focus-visible{outline:3px solid var(--pri);outline-offset:1px}
+.ok{--c:var(--ok)}.bad{--c:var(--bad)}
+select.ok,.slot.ok,.opt.ok,.w.ok{border-color:var(--ok)!important;background:var(--okb)!important}
+select.bad,.slot.bad,.opt.bad,.w.bad{border-color:var(--bad)!important;background:var(--badb)!important}
+.opt{display:flex;align-items:center;gap:12px;width:100%;text-align:left;font:inherit;color:var(--ink);background:var(--card);border:2px solid var(--line);border-radius:14px;padding:14px 16px;margin-bottom:10px;cursor:pointer;transition:.15s}
+.opt:hover{border-color:var(--pri);transform:translateY(-1px)}
+.opt .r{width:22px;height:22px;border-radius:50%;border:2px solid var(--mut);flex:none}
+.opt.sel{border-color:var(--pri);background:var(--soft)}.opt.sel .r{border-color:var(--pri);background:radial-gradient(var(--pri) 45%,transparent 50%)}
+.big{font-size:1.25rem;font-weight:600;margin:0 0 16px}
+.w{display:inline;padding:0;border-radius:4px;cursor:pointer;box-decoration-break:clone}
+.w:hover{background:var(--card)}.w.sel{background:var(--pri);color:#fff;box-shadow:0 0 0 2px var(--pri)}
+.layout{display:grid;gap:14px;grid-template-columns:1fr}
+.bank{display:flex;flex-wrap:wrap;gap:8px;padding:14px;border:2px dashed var(--line);border-radius:14px;margin-top:14px;min-height:56px}
+.chip{font:inherit;font-size:.95rem;background:var(--card);color:var(--ink);border:2px solid var(--line);border-radius:999px;padding:6px 14px;cursor:grab;box-shadow:0 2px 6px rgba(0,0,0,.06);line-height:1.4}
+.chip.sel{background:var(--pri);color:#fff;border-color:var(--pri)}
+.slot{display:inline-block;min-width:130px;padding:2px 10px;border:2px dashed var(--pri);border-radius:10px;background:var(--card);vertical-align:middle;cursor:pointer;line-height:1.7;text-align:center;font-size:.95rem}
+.slot.over{background:var(--soft)}.slot:empty::before{content:"\00a0"}
+.slot.filled{border-style:solid}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;align-items:stretch}
+.row .l{background:var(--soft);border-radius:12px;padding:14px;font-weight:600;display:flex;align-items:center;justify-content:center;text-align:center}
+.row .slot{display:flex;align-items:center;justify-content:center;min-height:56px;padding:8px;border-radius:12px}
+.bar{display:flex;gap:10px;flex-wrap:wrap;margin-top:20px;align-items:center}
+.btn{font:inherit;font-weight:700;border:0;border-radius:12px;padding:12px 22px;cursor:pointer;background:linear-gradient(135deg,var(--pri),var(--pri2));color:#fff}
+.btn.g{background:var(--soft);color:var(--pri)}.btn:disabled{opacity:.4;cursor:default}
+.fb{font-weight:600;margin-left:auto}.fb.ok{color:var(--ok)}.fb.bad{color:var(--bad)}
+.end{text-align:center;padding:20px 0}.end .n{font-size:3.5rem;font-weight:800;background:linear-gradient(90deg,var(--pri),var(--pri2));-webkit-background-clip:text;background-clip:text;color:transparent}
+@media(max-width:520px){.row{grid-template-columns:1fr}.card{padding:18px}h2{font-size:1.25rem}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header><h1>💼 Jobbsøknad – norskoppgaver</h1><div class="score" id="score"></div></header>
+<div class="dots" id="dots"></div>
+<div class="card" id="card"></div>
+</div>
+<script>
+const E=[
+{k:'dd',h:'Les og klikk på riktig ord',s:'Velg riktig ord i hver boks.',t:'Marita {søker*|leker|sover} på jobben. Hun er {jobbsøker*|arbeidsgiver|sulten}.\nHun sender {en søknad*|en hund|et hus}.'},
+{k:'mc',h:'Klikk på riktig svar',s:'Hva betyr det?',q:'Borgen Elektro har ledig jobb som elektriker.',o:['Borgen Elektro har lyst ut stillingen.','Borgen Elektro søker jobb.','Borgen Elektro sender søknad.'],a:0},
+{k:'fill',h:'Trekk inn riktig ord',s:'Trekk ordene til riktig plass – eller trykk på et ord og deretter på en luke.',t:'Borgen Elektro søker en flink elektriker.\nVi søker en effektiv og nøyaktig elektriker. Du må kunne {reparere} små elektriske apparat. {Søknad} skal sendes på e-post til {borgen@elektro.no}.',b:['Søker','bære','Marita Hermansen','borgen@elektro.no','reparere','løfte','Annonse','Søknad']},
+{k:'dd',h:'Les og klikk på riktig ord',s:'Fyll ut søknaden.',t:'{Søknad*|Annonse|Overskrift} på jobb som elektriker\nJeg {så*|spiste|ga} annonsen {deres*|din|min} på finn.no og søker jobben som elektriker. Jeg er {utdannet*|sulten|ledig} elektriker. Jeg er effektiv og nøyaktig, og jeg har gode {referanser*|fingre|bilder}. Jeg er 24 år.\nJeg håper å høre fra {dere*|du|han}.\n{Vennlig*|Vanlig|Ledig} hilsen\nMarita Hermansen'},
+{k:'word',h:'Klikk på riktig ord i teksten',s:'Hva kaller vi dokument som du sender sammen med en søknad?',t:'Når du sender med papir som vedlegg, må du nummerere dem. Noen ganger sender du bare ett dokument, andre ganger sender du flere.',a:'vedlegg'},
+{k:'match',h:'Sett sammen',s:'Sett sammen så uttrykkene gir mening.',p:[['å være aktuell','for jobben'],['å lyse ut','en stilling'],['å være','en jobbsøker']],x:['person til jobben']},
+{k:'mc',h:'Klikk på riktig ord',s:'Hva er en tillitsvalgt?',q:'',o:['en venn du har tillit til','en representant fra fagforeningen','en leder på jobben'],a:1},
+{k:'dd',h:'Les og klikk på riktig ord',s:'Ibrahim skal skrive en søknad.',t:'Ibrahim har lest {annonsen*|søknaden|hilsenen} fra Borgen Elektro. Han vil {søke*|lyse ut|nummerere} jobben, fordi han tror han passer godt til den. Nå skal han skrive {søknaden*|annonsen|vedlegget}.\nHan vil skrive en {god*|dyr|rød} søknad. Han håper på å bli {innkalt*|ansatt|utlyst} til jobbintervju.'},
+{k:'dd',h:'Les og klikk på riktig ord',s:'Velg ordet som passer.',t:'Jeg så {en annonse*|en film|et brev} om ledig jobb på nav.no. Jeg ønsker å søke på denne jobben.\nJeg så på Internett at det er en ledig {stilling*|stol|søknad} hos dere, og jeg er veldig interessert.\nJeg så annonsen deres på Facebook og ble veldig glad. Jeg tror {jobben*|været|maten} passer for meg.'},
+{k:'match',h:'Sett sammen',s:'Hva hører sammen?',p:[['en annonse','en tekst om en ledig stilling'],['en overskrift','et ord eller en setning som viser hva teksten handler om'],['en innledning','det første avsnittet i en tekst']],x:[]}
+];
+const S=E.map(()=>({r:null,v:{}}));let cur=0,sel=null,end=false;
+const $=id=>document.getElementById(id);
+const esc=s=>s.replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const sh=a=>a.map(x=>[Math.random(),x]).sort((a,b)=>a[0]-b[0]).map(x=>x[1]);
+const cache={};
+function opts(i,j,list){const k=i+'_'+j;return cache[k]||(cache[k]=sh(list))}
+
+function dots(){$('dots').innerHTML=E.map((_,i)=>`<button class="dot ${i==cur&&!end?'cur ':''}${S[i].r===true?'ok':S[i].r===false?'bad':''}" onclick="go(${i})" aria-label="Oppgave ${i+1}">${i+1}</button>`).join('');
+const d=S.filter(s=>s.r===true).length;$('score').textContent=`${d} av ${E.length} riktige`}
+function go(i){cur=i;sel=null;end=false;render()}
+
+function render(){dots();const e=E[cur],st=S[cur];let h=`<div class="step">Oppgave ${cur+1} av ${E.length}</div><h2>${e.h}</h2><p class="sub">${e.s}</p>`;
+if(e.k=='dd'){let n=0;h+='<div class="box">'+e.t.split('\n').map(p=>'<p>'+esc(p).replace(/\{([^}]+)\}/g,(m,g)=>{const j=n++,os=opts(cur,j,g.split('|').map(x=>x.replace('*','')));return `<select data-j="${j}" onchange="S[cur].v[${j}]=this.value;S[cur].r=null;clr()"><option value="">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</option>${os.map(o=>`<option ${st.v[j]==o?'selected':''}>${o}</option>`).join('')}</select>`}).replace(/ ([.,!?])/g,'$1')+'</p>').join('')+'</div>'}
+if(e.k=='mc'){if(e.q)h+=`<p class="big">${e.q}</p>`;h+=e.o.map((o,j)=>`<button class="opt ${st.v.a===j?'sel':''}" data-j="${j}" onclick="S[cur].v.a=${j};S[cur].r=null;render()"><span class="r"></span>${o}</button>`).join('')}
+if(e.k=='word'){h+='<div class="box" style="line-height:2.2">'+e.t.split(' ').map((w,j)=>`<span class="w ${st.v.a===j?'sel':''}" data-j="${j}" onclick="S[cur].v.a=${j};S[cur].r=null;render()">${w}</span>`).join(' ')+'</div>'}
+if(e.k=='fill'){let n=0;h+='<div class="box">'+e.t.split('\n').map(p=>'<p>'+esc(p).replace(/\{([^}]+)\}/g,()=>{const j=n++;return slot(j)})+'</p>').join('')+'</div>'+bank(e.b)}
+if(e.k=='match'){h+=e.p.map((p,j)=>`<div class="row"><div class="l">${p[0]}</div>${slot(j)}</div>`).join('')+bank(sh0(cur,e.p.map(p=>p[1]).concat(e.x)))}
+h+=`<div class="bar"><button class="btn" onclick="check()">Sjekk svar</button><button class="btn g" onclick="reset()">Prøv igjen</button><span class="fb" id="fb"></span></div>`;
+h+=`<div class="bar" style="margin-top:12px">${cur>0?'<button class="btn g" onclick="go(cur-1)">← Forrige</button>':''}<button class="btn g" style="margin-left:auto" onclick="${cur<E.length-1?'go(cur+1)':'finish()'}">${cur<E.length-1?'Neste →':'Se resultat'}</button></div>`;
+$('card').innerHTML=h;wire();if(st.r!==null)mark(false)}
+function sh0(i,l){return opts(i,'b',l)}
+function slot(j){const v=S[cur].v[j];return `<span class="slot ${v?'filled':''}" data-j="${j}">${v?`<span class="chip" draggable="true" data-v="${esc(v)}" data-from="${j}">${esc(v)}</span>`:''}</span>`}
+function bank(l){const used=Object.values(S[cur].v);return `<div class="bank" id="bank">${l.filter(x=>!used.includes(x)).map(x=>`<span class="chip ${sel===x?'sel':''}" draggable="true" data-v="${esc(x)}">${esc(x)}</span>`).join('')}</div>`}
+function wire(){const e=E[cur];if(e.k!='fill'&&e.k!='match')return;
+document.querySelectorAll('.chip').forEach(c=>{c.ondragstart=ev=>{ev.dataTransfer.setData('text/plain',JSON.stringify({v:c.dataset.v,f:c.dataset.from??null}))};c.onclick=ev=>{ev.stopPropagation();const f=c.dataset.from;if(f!=null){delete S[cur].v[f];S[cur].r=null;sel=null;render()}else{sel=sel===c.dataset.v?null:c.dataset.v;render()}}});
+document.querySelectorAll('.slot').forEach(s=>{const j=s.dataset.j;s.ondragover=ev=>{ev.preventDefault();s.classList.add('over')};s.ondragleave=()=>s.classList.remove('over');
+s.ondrop=ev=>{ev.preventDefault();try{const d=JSON.parse(ev.dataTransfer.getData('text/plain'));if(d.f!=null)delete S[cur].v[d.f];put(j,d.v)}catch(x){}};
+s.onclick=()=>{if(sel&&!S[cur].v[j]){put(j,sel)}}});
+const b=$('bank');if(b){b.ondragover=ev=>ev.preventDefault();b.ondrop=ev=>{ev.preventDefault();try{const d=JSON.parse(ev.dataTransfer.getData('text/plain'));if(d.f!=null){delete S[cur].v[d.f];S[cur].r=null;render()}}catch(x){}}}}
+function put(j,v){S[cur].v[j]=v;S[cur].r=null;sel=null;render()}
+function ans(e,i){if(e.k=='dd'){const m=e.t.match(/\{[^}]+\}/g).map(g=>g.slice(1,-1).split('|').find(x=>x.includes('*')).replace('*',''));return m}
+if(e.k=='mc')return[e.a];if(e.k=='word')return[e.t.split(' ').findIndex(w=>w.replace(/[.,]/g,'')==e.a)];
+if(e.k=='fill')return e.t.match(/\{[^}]+\}/g).map(g=>g.slice(1,-1));if(e.k=='match')return e.p.map(p=>p[1])}
+function check(){const e=E[cur],A=ans(e,cur),v=S[cur].v;let ok=true,n=0;
+if(e.k=='mc'||e.k=='word'){ok=v.a===A[0]}else{A.forEach((a,j)=>{if(v[j]!==a)ok=false;if(v[j]==null||v[j]==='')n++})}
+const empty=(e.k=='mc'||e.k=='word')?v.a==null:n>0;
+if(empty){$('fb').className='fb bad';$('fb').textContent='Svar på alt først.';return}
+S[cur].r=ok;dots();mark(true)}
+function mark(animate){const e=E[cur],A=ans(e,cur),v=S[cur].v;
+if(e.k=='dd')document.querySelectorAll('select').forEach(s=>{const j=+s.dataset.j;s.classList.add(v[j]===A[j]?'ok':'bad')});
+if(e.k=='mc')document.querySelectorAll('.opt').forEach(o=>{const j=+o.dataset.j;if(j===A[0])o.classList.add('ok');else if(j===v.a)o.classList.add('bad')});
+if(e.k=='word')document.querySelectorAll('.w').forEach(o=>{const j=+o.dataset.j;if(j===A[0])o.classList.add('ok');else if(j===v.a)o.classList.add('bad')});
+if(e.k=='fill'||e.k=='match')document.querySelectorAll('.slot').forEach(s=>{const j=+s.dataset.j;if(v[j]!=null)s.classList.add(v[j]===A[j]?'ok':'bad')});
+const f=$('fb');if(f){f.className='fb '+(S[cur].r?'ok':'bad');f.textContent=S[cur].r?'✓ Helt riktig!':'✗ Ikke helt riktig – prøv igjen.'}}
+function clr(){S[cur].r=null;document.querySelectorAll('select').forEach(s=>s.classList.remove('ok','bad'));const f=$('fb');if(f)f.textContent='';dots()}
+function reset(){S[cur]={r:null,v:{}};sel=null;delete cache[cur+'_b'];render()}
+function finish(){end=true;dots();const d=S.filter(s=>s.r===true).length;$('card').innerHTML=`<div class="end"><div class="n">${d}/${E.length}</div><h2>${d==E.length?'Fantastisk! 🎉':d>=7?'Bra jobbet! 👏':'Fortsett å øve 💪'}</h2><p class="sub">Du har ${d} riktige av ${E.length} oppgaver. Oppgaver du ikke har sjekket, teller ikke.</p><div class="bar" style="justify-content:center"><button class="btn" onclick="S.forEach((s,i)=>{S[i]={r:null,v:{}}});for(const k in cache)delete cache[k];go(0)">Start på nytt</button></div></div>`}
+render();
+</script>
+</body>
+</html>
